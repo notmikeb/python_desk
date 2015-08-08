@@ -33,3 +33,5 @@ for i in os.sys.argv[2:]:
 
 print (" put " , num, " pictures together")
 im1.save('all.jpg')   
+
+print ("done.....")
