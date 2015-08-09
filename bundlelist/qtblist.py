@@ -29,8 +29,10 @@ class TestListView(QtGui.QListWidget):
             event.accept()
             links = []
             for url in event.mimeData().urls():
-                links.append(str(url.toLocalFile()))
+              links.append(str(url.toLocalFile()))
+              print("links ", str(url.toLocalFile()))
             self.emit(QtCore.SIGNAL("dropped"), links)
+            print("emit done")
         else:
             event.ignore()
 
@@ -61,3 +63,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
