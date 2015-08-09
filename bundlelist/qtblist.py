@@ -1,6 +1,7 @@
 import sys
 import os
 from PyQt4 import QtGui, QtCore
+from PyQt4.QtGui import *
 
 # article http://stackoverflow.com/questions/4151637/pyqt4-drag-and-drop-files-into-qlistwidget
 
@@ -43,6 +44,33 @@ class MainForm(QtGui.QMainWindow):
         self.view = TestListView(self)
         self.connect(self.view, QtCore.SIGNAL("dropped"), self.pictureDropped)
         self.setCentralWidget(self.view)
+        self.setupMenu()
+    def save(self):
+      print("save is invoked")
+      pass
+    def load(self):
+      print("load is invoked")
+      pass
+    def runtest(self):
+      print("runcheck is invoked")
+      pass
+
+    def setupMenu(self):
+      saveAction = QAction(QIcon('save.jpg'), '&save', self)
+      saveAction.triggered.connect(self.save)
+      loadAction = QAction(QIcon('load.jpg'), '&load', self)
+      loadAction.triggered.connect(self.load)
+      runtestAction = QAction(QIcon('runtest.jpg'), '&load', self)
+      runtestAction.triggered.connect(self.runtest)
+
+      toolBar = self.addToolBar('File')
+      toolBar.addAction(saveAction)
+      toolBar.addAction(loadAction)
+      toolBar.addAction(runtestAction)
+      menuBar = self.menuBar()
+      fileMenu = menuBar.addMenu('&File')
+      fileMenu.addAction(saveAction)
+      fileMenu.addAction(loadAction)
 
     def pictureDropped(self, l):
         for url in l:
