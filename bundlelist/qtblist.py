@@ -47,12 +47,26 @@ class MainForm(QtGui.QMainWindow):
         self.setupMenu()
     def save(self):
       print("save is invoked")
+      with open("list.txt", 'w') as f:
+        for i in range(self.view.count()):
+          f.write(self.view.item(i).text())
+          f.write("\n")
       pass
     def load(self):
       print("load is invoked")
+      with open("list.txt") as f:
+        self.view.clear()
+        list = f.read()
+        lines = list.split('\n')
+        for line in lines:
+           if line != '':
+             item = QtGui.QListWidgetItem(line, self.view)
+             item.setStatusTip(line)
       pass
     def runtest(self):
       print("runcheck is invoked")
+      for i in range(self.view.count()):
+        print(self.view.item(i).text())
       pass
 
     def setupMenu(self):
@@ -76,12 +90,14 @@ class MainForm(QtGui.QMainWindow):
         for url in l:
             if os.path.exists(url):
                 print(url)                
+                print (type(url))
                 icon = QtGui.QIcon(url)
                 pixmap = icon.pixmap(72, 72)                
                 icon = QtGui.QIcon(pixmap)
                 item = QtGui.QListWidgetItem(url, self.view)
                 item.setIcon(icon)        
                 item.setStatusTip(url)        
+                print("after url")
 
 def main():
     app = QtGui.QApplication(sys.argv)
