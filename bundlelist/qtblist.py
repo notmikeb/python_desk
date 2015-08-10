@@ -76,15 +76,21 @@ class MainForm(QtGui.QMainWindow):
       loadAction.triggered.connect(self.load)
       runtestAction = QAction(QIcon('runtest.jpg'), '&load', self)
       runtestAction.triggered.connect(self.runtest)
+      clearAction = QAction(QIcon('clear.jpg'), "&Clear", self)
+      clearAction.triggered.connect(self.view.clear)
 
       toolBar = self.addToolBar('File')
       toolBar.addAction(saveAction)
       toolBar.addAction(loadAction)
       toolBar.addAction(runtestAction)
+      toolBar.addAction(clearAction)
       menuBar = self.menuBar()
       fileMenu = menuBar.addMenu('&File')
       fileMenu.addAction(saveAction)
       fileMenu.addAction(loadAction)
+
+      if os.path.exists('list.txt'):
+        self.load()
 
     def pictureDropped(self, l):
         for url in l:
