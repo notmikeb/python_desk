@@ -2,6 +2,9 @@ import sys
 import os
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
+from PyQt4.QtGui import QInputDialog
+
+import shutil
 
 # article http://stackoverflow.com/questions/4151637/pyqt4-drag-and-drop-files-into-qlistwidget
 
@@ -44,6 +47,7 @@ class MainForm(QtGui.QMainWindow):
         self.view = TestListView(self)
         self.connect(self.view, QtCore.SIGNAL("dropped"), self.pictureDropped)
         self.setCentralWidget(self.view)
+        self.setToolTip( self.getHelp())
         self.setupMenu()
     def save(self):
       print("save is invoked")
@@ -65,25 +69,53 @@ class MainForm(QtGui.QMainWindow):
       pass
     def runtest(self):
       print("runcheck is invoked")
+      print( "-" * 10 , " Start " , "-" * 10)
+      content = ""
+      if self.view.count() < 1:
+        QMessageBox().question(self, 'No file', "No file or folder to clear", QtGui.QMessageBox.Yes, QtGui.QMessageBox.Yes)
+        return
       for i in range(self.view.count()):
-        print(self.view.item(i).text())
+        filepath = self.view.item(i).text()
+        data =  "Exist:" + str(os.path.exists(filepath)) + "  " + filepath
+        content = content + "\n" + data
+        print(data)
+      print( "-" * 10 , " END " , "-" * 10)
+      ret = QMessageBox().question(self, 'Message', content, QtGui.QMessageBox.Yes, QtGui.QMessageBox.Yes)
       pass
+    def deleteFolder(self):
+      if self.view.count() < 1:
+        QMessageBox().question(self, 'No file', "please drag file or folder to this window before press delete", QtGui.QMessageBox.Yes, QtGui.QMessageBox.Yes)
+        return
+      text, ok = QInputDialog.getText(self, "Input 'del' to del all files", "Enter 'del' to delete all folders")
+      if ok:
+        print("okay ~ start to delete all files")
+        for i in range(self.view.count()):
+          if len(self.view.item(i).text()) > 3:
+            # avoid to delete all files in
+            shutil.rmtree(self.view.item(i).text(), ignore_errors=True)
+          else:
+            print("ignore to delete ", self.view.item(i).text())
+      else:
+        print("abort the deletion")
 
     def setupMenu(self):
       saveAction = QAction(QIcon('save.jpg'), '&save', self)
       saveAction.triggered.connect(self.save)
       loadAction = QAction(QIcon('load.jpg'), '&load', self)
       loadAction.triggered.connect(self.load)
-      runtestAction = QAction(QIcon('runtest.jpg'), '&load', self)
+      runtestAction = QAction(QIcon('runtest.jpg'), '&Runtest', self)
       runtestAction.triggered.connect(self.runtest)
       clearAction = QAction(QIcon('clear.jpg'), "&Clear", self)
       clearAction.triggered.connect(self.view.clear)
+      delAction = QAction(QIcon('delete.jpg'), "&Delete", self)
+      delAction.triggered.connect(self.deleteFolder)
 
       toolBar = self.addToolBar('File')
       toolBar.addAction(saveAction)
       toolBar.addAction(loadAction)
       toolBar.addAction(runtestAction)
       toolBar.addAction(clearAction)
+      toolBar.addAction(delAction)
       menuBar = self.menuBar()
       fileMenu = menuBar.addMenu('&File')
       fileMenu.addAction(saveAction)
@@ -91,6 +123,8 @@ class MainForm(QtGui.QMainWindow):
 
       if os.path.exists('list.txt'):
         self.load()
+    def getHelp(self):
+      return "<h1><b> drag file or folder to this window and press 'Delete' Button to delete all files </b></h1> "
 
     def pictureDropped(self, l):
         for url in l:
