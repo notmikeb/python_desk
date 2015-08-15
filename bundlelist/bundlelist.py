@@ -3,6 +3,7 @@ import os
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
 from PyQt4.QtGui import QInputDialog
+from PyQt4.QtCore import *
 
 import shutil
 
@@ -43,11 +44,20 @@ class TestListView(QtGui.QListWidget):
 class MainForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(MainForm, self).__init__(parent)
+        wicon = QtGui.QIcon()
+        wicon.addFile('bundlelist256.png', QtCore.QSize(256,256))
+        wicon.addFile('bundlelist.png', QtCore.QSize(16,16))
+        wicon.addFile('bundlelist.png', QtCore.QSize(24,24))
+        wicon.addFile('bundlelist32.png', QtCore.QSize(32,32))
+        wicon.addFile('bundlelist48.png', QtCore.QSize(48,48))
+        wicon.addFile('bundlelist.png')
+        self.setWindowIcon(wicon)
 
         self.view = TestListView(self)
         self.connect(self.view, QtCore.SIGNAL("dropped"), self.pictureDropped)
         self.setCentralWidget(self.view)
         self.setToolTip( self.getHelp())
+        self.setWindowTitle("BundleList tool")
         self.setupMenu()
     def save(self):
       print("save is invoked")
@@ -97,6 +107,10 @@ class MainForm(QtGui.QMainWindow):
             print("ignore to delete ", self.view.item(i).text())
       else:
         print("abort the deletion")
+    def showHelp(self):
+        text = "<h1>A drag-and-drop tool to delete folds in one button</h1>" 
+        text = text + self.getHelp() + " email: notmikeb at gmail.com "
+        QMessageBox().question(self, 'Help', text)
 
     def setupMenu(self):
       saveAction = QAction(QIcon('save.jpg'), '&save', self)
@@ -109,6 +123,8 @@ class MainForm(QtGui.QMainWindow):
       clearAction.triggered.connect(self.view.clear)
       delAction = QAction(QIcon('delete.jpg'), "&Delete", self)
       delAction.triggered.connect(self.deleteFolder)
+      helpAction = QAction(QIcon('help.jpg'), "&Help", self)
+      helpAction.triggered.connect(self.showHelp)
 
       toolBar = self.addToolBar('File')
       toolBar.addAction(saveAction)
@@ -116,10 +132,12 @@ class MainForm(QtGui.QMainWindow):
       toolBar.addAction(runtestAction)
       toolBar.addAction(clearAction)
       toolBar.addAction(delAction)
+      toolBar.addAction(helpAction)
       menuBar = self.menuBar()
       fileMenu = menuBar.addMenu('&File')
       fileMenu.addAction(saveAction)
       fileMenu.addAction(loadAction)
+      fileMenu.addAction(helpAction)
 
       if os.path.exists('list.txt'):
         self.load()
@@ -142,6 +160,7 @@ class MainForm(QtGui.QMainWindow):
 def main():
     app = QtGui.QApplication(sys.argv)
     form = MainForm()
+    app.setWindowIcon(QIcon('bundlelist.png'))
     form.show()
     app.exec_()
 
