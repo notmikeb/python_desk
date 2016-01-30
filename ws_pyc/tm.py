@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 import ctypes
 from ctypes import *
+#study link http://starship.python.net/crew/theller/ctypes/tutorial.html#return-types
+#sample tutorial http://tw.tonytuan.org/2008/10/cc-timetstruct-tm.html
+# dictionary https://docs.python.org/3/library/ctypes.html
 
 libc = ctypes.cdll.LoadLibrary('libc.so.6')
 libc.time(None)
