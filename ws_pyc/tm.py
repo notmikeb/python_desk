@@ -21,8 +21,26 @@ class pytm(ctypes.Structure):
              ('tm_zone', c_char_p)
             ]
 
+def showdatetime(tm2):
+    print ( 'date time is ', 1900+ tm2.tm_year, tm2.tm_mon+1, tm2.tm_mday, tm2.tm_hour, tm2.tm_min, tm2.tm_sec)
+
 tm1 = pytm()
 print( 'asctime is ',  c_char_p(libc.asctime(byref(tm1))).value)
 libc.mktime(byref(tm1))
 print( tm1.tm_sec, tm1.tm_year)
 
+# struct tm *gmtime( time_t *t)
+t1 = c_long( libc.time(None) )
+gmtime = libc.gmtime
+gmtime.argtypes = [POINTER(c_long)]
+gmtime.restype = POINTER(pytm)
+tm2p = gmtime(byref(t1))
+tm2 = tm2p.contents
+showdatetime(tm2)
+
+gmtime = libc.localtime
+gmtime.argtypes = [POINTER(c_long)]
+gmtime.restype = POINTER(pytm)
+tm2p = gmtime(byref(t1))
+tm2 = tm2p.contents
+showdatetime(tm2)
